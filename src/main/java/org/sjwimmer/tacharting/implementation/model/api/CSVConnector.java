@@ -109,6 +109,25 @@ public class CSVConnector implements OHLCVDataSource<CSVKey, File> {
         return new TaTimeSeries(name==null?"unnamed":name.toUpperCase(),Bars,Currency.getInstance("USD"),timePeriod);
     }
 
+	public TaTimeSeries getSeriesFromAlphaVintageFile(String name, File file) throws IOException{
+		CSVReader reader = new CSVReaderBuilder(new FileReader(file)).withCSVParser(new CSVParser()).build();
+		String line[];
+		line = reader.readNext();
+		Map<Parameter.Columns, Integer> headers = FormatUtils.getHeaderMap(Arrays.asList(line));
+		List<Bar> Bars = new ArrayList<>();
+		while((line = reader.readNext()) != null) {
+			Bars.add(FormatUtils.extractOHLCData(
+					headers, DateTimeFormatter.ofPattern(TimeFormatType.ALPHA_VINTAGE_INTRADAY.pattern),line,false));
+		}
+		reader.close();
+		if(Bars.get(Bars.size()-1).getEndTime().isBefore(Bars.get(0).getEndTime())){
+			Collections.reverse(Bars);
+		}
+		String yahooIntervall = YahooSettingsManager.getProperties().getProperty(Parameter.PROPERTY_YAHOO_INTERVAL);
+		GeneralTimePeriod timePeriod = GeneralTimePeriod.FIVE_MINUTE;
+		return new TaTimeSeries(name==null?"unnamed":name.toUpperCase(),Bars,Currency.getInstance("USD"),timePeriod);
+	}
+
 	@Override
 	public List<String> getAllAvailableSymbols() throws Exception {
 		return Arrays.asList(name);

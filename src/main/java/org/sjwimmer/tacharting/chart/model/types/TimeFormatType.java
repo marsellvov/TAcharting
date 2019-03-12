@@ -11,8 +11,11 @@ public enum TimeFormatType {
     yyyyMMdd(2, "yyyy/MM/dd", "(2017/08/18)"),
     // e.g  2017-12-31 ok
     YAHOO(3, "yyyy-MM-dd", "Format of Yahoo financial api (2017-12-31)"),
+
     // e.g  02 Jan 2017
-    EODATA(4, "dd MMM yyyy", "Format of Eoddata (http://eoddata.com/) 02 Jan 2017");
+    EODATA(4, "dd MMM yyyy", "Format of Eoddata (http://eoddata.com/) 02 Jan 2017"),
+
+    ALPHA_VINTAGE_INTRADAY(5, "yyyy-MM-dd HH:mm:ss", "");
 
     public final int id;
     public final String pattern, comment;

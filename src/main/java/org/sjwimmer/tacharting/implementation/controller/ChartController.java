@@ -493,7 +493,7 @@ public class ChartController implements MapChangeListener<String, ChartIndicator
                 loadYahooData(symbol);
                 break;}
             case AlphaVantage: {
-                log.error("AlphaVantage connection not implemented");
+                loadAlphaVantageData(symbol);
                 break;
             }
             default: loadIEX(symbol);
@@ -527,25 +527,32 @@ public class ChartController implements MapChangeListener<String, ChartIndicator
             yahooConnector.exceptionProperty().get().printStackTrace();
         });
     }
+
+    private void loadAlphaVantageData(String... symbol){
+        log.debug("Start Alpha Vantage request...");
+        String[] cleanSymbols = Arrays.stream(symbol).map(e->e.replaceAll("\\s+","")).toArray(String[]::new);
+
+
+    }
     
     private void loadIEX(String... symbol){
 
-    	log.debug("Start IEX request...");
+        log.debug("Start IEX request...");
         String[] cleanSymbols = Arrays.stream(symbol).map(e->e.replaceAll("\\s+","")).toArray(String[]::new);
 
         IEXDataSource iexSource = new IEXDataSource();
         for(String sym: symbol) {
-        	TaTimeSeries series;
-			try {
-				series = iexSource.getSymbolData(new IEXKey(sym));
-	            this.tableKey.get(series.getTimeFormatType()).add(series.getKey());
-	            if(tbnStoreData.isSelected()){
-	                storeSeries(series);
-	            }
-			} catch (Exception e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
+            TaTimeSeries series;
+            try {
+                series = iexSource.getSymbolData(new IEXKey(sym));
+                this.tableKey.get(series.getTimeFormatType()).add(series.getKey());
+                if(tbnStoreData.isSelected()){
+                    storeSeries(series);
+                }
+            } catch (Exception e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            }
 
         }
     }
